@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #dddddd;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 4px #999;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .logout-btn {
+            background-color: #ff4444;
+        }
+
+        .logout-btn:hover {
+            background-color: #cc0000;
+        }
+
+        .logout-btn:active {
+            box-shadow: 0 2px #666;
+            transform: translateY(2px);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .profile-header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="profile-header">
+    <h1 th:text="'#' + ${user.id} + ': ' + ${user.username}"></h1>
+</div>
+
+<table>
+    <tr>
+        <td><strong>Roles</strong></td>
+        <td>
+    <span th:each="role : ${user.roles}" class="role-badge">
+        <i class="fas fa-user-shield" th:if="${role.name == 'ROLE_ADMIN'}"></i>
+        <i class="fas fa-user" th:if="${role.name == 'ROLE_USER'}"></i>
+        <span th:text="${#strings.replace(role.name,'ROLE_','')}"></span>
+        <span th:unless="${roleStat.last}">, </span>
+    </span>
+        </td>
+    </tr>
+</table>
+
+<div class="button-container">
+    <form th:action="@{/logout}" method="post" style="display: inline;">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit" class="btn logout-btn">Logout</button>
+    </form>
+</div>
+</body>
+</html>

@@ -14,4 +14,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
     Branch: master
+## [20250326_0.1]
+
+### Added
+- MySQL driver properties.
+- Entities: "User", "Role".
+- Repositories: "UserRepository", "RoleRepository".
+- Services: "UserDetailsServiceImp", "UserService", "UserServiceImp".
+- Configurations: "WebSecurityConfig", "MvcConfig", "SuccessUserHandler".
+- Templates: "index", "registration", "login", "profile", "admin".
+- Controllers: "DefaultController".
+- Initializer.
+
+### Fixed
+### Changed
+### Removed
+
+
+    Branch: master
 ## [Initial commit] - 2025.03.24
