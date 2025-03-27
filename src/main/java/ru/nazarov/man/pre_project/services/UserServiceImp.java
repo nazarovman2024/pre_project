@@ -1,5 +1,6 @@
 package ru.nazarov.man.pre_project.services;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
@@ -19,32 +20,29 @@ public class UserServiceImp implements UserService{
     private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImp(UserRepository userRepository) {
+    public UserServiceImp(
+            UserRepository userRepository
+    ) {
         this.userRepository = userRepository;
     }
 
     @Override
-    public void add(User user) {
-        if (user.getId() == null) {
-            userRepository.save(user);
-        } else {
-            throw new IllegalArgumentException("User ID must be null for add operation");
-        }
+    public void save(User user) {
+        userRepository.save(user);
     }
 
     @Override
-    public void update(User user) {
-        if (user.getId() != null) {
-            userRepository.save(user);
-        } else {
-            throw new IllegalArgumentException("User ID must not be null for update operation");
-        }
-    }
-
     @Transactional(readOnly = true)
+    public Optional<User> findUser(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        user.ifPresent(usr -> Hibernate.initialize(usr.getRoles()));
+        return user;
+    }
+
     @Override
-    public Optional<User> getUser(Long id) {
-        return userRepository.findById(id);
+    @Transactional(readOnly = true)
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @Override
@@ -53,11 +51,13 @@ public class UserServiceImp implements UserService{
         return userRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public List<User> getUsers(int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return userRepository.findAll(pageable).getContent();
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        List<User> users = userRepository.findAll(pageable).getContent();
+        users.forEach(user -> Hibernate.initialize(user.getRoles())); // Корявая затычка, но как сделать лучше, я не придумал...
+        return users;
     }
 
     @Override
@@ -67,5 +67,10 @@ public class UserServiceImp implements UserService{
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("User with ID " + id + " not found", e);
         }
+    }
+
+    @Override
+    public void deleteAll() {
+        userRepository.deleteAll();
     }
 }

@@ -23,18 +23,18 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
-        requestCache.setMatchingRequestParameterName(null); // отключает привязку к параметрам
+        requestCache.setMatchingRequestParameterName(null);
 
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/registration", "login**", "/error").permitAll()
+                        .requestMatchers("/", "/registration", "/login**", "/error").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/profile").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .successHandler(successUserHandler) // Обработчик успешной аутентификации
+                        .successHandler(successUserHandler)
                         .permitAll()
                 )
                 .logout(LogoutConfigurer::permitAll)

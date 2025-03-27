@@ -14,6 +14,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
     Branch: master
+## [20250326_0.2]
+
+### Added
+- Templates: "admin/users", "admin/edit", "admin/new".
+- Controllers: "AdminController".
+- Services: RoleService.
+
+### Fixed
+- UserService.
+- Initializer.
+
+### Changed
+- Template hierarchy.
+
+### Removed
+
+
+    Branch: master
 ## [20250326_0.1]
 
 ### Added

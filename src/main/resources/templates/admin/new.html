@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html th:fragment="content" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{common :: head(title='Create New User')}"></div>
+
+<div class="card-header">
+    <h2>User Information</h2>
+</div>
+
+<div class="card">
+    <form th:action="@{/admin/new}" method="post" th:object="${user}">
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" th:field="*{username}" class="form-control"
+                   placeholder="Enter username" required th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'">
+            <div th:if="${#fields.hasErrors('username')}" class="error" th:errors="*{username}"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" th:field="*{password}" class="form-control"
+                   placeholder="Enter password" required th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'">
+            <div th:if="${#fields.hasErrors('password')}" class="error" th:errors="*{password}"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control"
+                   placeholder="Confirm password" required>
+        </div>
+
+        <div class="form-group">
+            <label>Roles</label>
+            <div class="roles-container">
+                <div th:each="role : ${allRoles}" class="role-checkbox">
+                    <input type="checkbox" th:id="${'role_' + role.id}" th:value="${role.id}" th:name="roles">
+                    <label th:for="${'role_' + role.id}" th:text="${#strings.replace(role.authority,'ROLE_','')}"></label>
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+        <div class="text-right">
+            <button type="submit" class="btn btn-success">Create User</button>
+        </div>
+    </form>
+</div>
+</html>

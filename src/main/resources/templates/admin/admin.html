@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Admin</title>
     <style>
-
         .btn {
             display: inline-block;
             padding: 10px 20px;
@@ -47,16 +46,45 @@
             transform: translateY(2px);
         }
 
+        .users-btn {
+            background-color: #2196F3;
+        }
+
+        .users-btn:hover {
+            background-color: #0b7dda;
+        }
+
+        .users-btn:active {
+            box-shadow: 0 2px #666;
+            transform: translateY(2px);
+        }
+
+        .create-user-btn {
+            background-color: #ff9800;
+        }
+
+        .create-user-btn:hover {
+            background-color: #e68a00;
+        }
+
+        .create-user-btn:active {
+            box-shadow: 0 2px #666;
+            transform: translateY(2px);
+        }
+
         .button-container {
             margin: 20px;
             text-align: center;
         }
-
     </style>
 </head>
 <body>
 <div class="button-container">
     <a href="../profile" class="btn profile-btn">Profile</a>
+
+    <a href="../admin/users" class="btn users-btn">Users</a>
+
+    <a href="../admin/new" class="btn create-user-btn">Create User</a>
 
     <form th:action="@{/logout}" method="post" style="display: inline;">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>

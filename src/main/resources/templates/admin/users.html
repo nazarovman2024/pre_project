@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common :: ~{::head(title='Users Management')}}">
+<div th:fragment="content">
+  <div class="text-right" style="margin-bottom: 20px;">
+    <a th:href="@{/admin/new}" class="btn btn-success">Add New User</a>
+  </div>
+
+  <table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Username</th>
+    <th>Roles</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="user : ${users}">
+    <td th:text="${user.id}"></td>
+    <td th:text="${user.username}"></td>
+    <td>
+        <span th:each="role, roleStat : ${user.roles}" class="role-badge">
+          <span th:text="${#strings.replace(role.name,'ROLE_','')}"></span>
+          <span th:unless="${roleStat.last}">, </span>
+        </span>
+    </td>
+    <td>
+      <a th:href="@{/admin/edit(id=${user.id})}" class="btn btn-info">Edit</a>
+      <form th:action="@{/admin/delete(id=${user.id})}" method="post" class="inline-form">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
+</div>
+</html>

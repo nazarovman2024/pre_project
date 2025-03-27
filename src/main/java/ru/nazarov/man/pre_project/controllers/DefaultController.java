@@ -7,31 +7,26 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.nazarov.man.pre_project.entities.*;
-import ru.nazarov.man.pre_project.repositories.*;
+import ru.nazarov.man.pre_project.services.*;
 
 import java.util.Set;
 
 @Controller
 public class DefaultController {
 
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    private final UserService userService;
+    private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public DefaultController(
-            UserRepository userRepository,
-            RoleRepository roleRepository,
+            UserService userService,
+            RoleService roleService,
             PasswordEncoder passwordEncoder
     ) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+        this.userService = userService;
+        this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @GetMapping("/registration")
-    public String showRegistrationForm() {
-        return "registration";
     }
 
     @PostMapping("/registration")
@@ -39,15 +34,15 @@ public class DefaultController {
             @RequestParam String username,
             @RequestParam String password,
             @RequestParam String confirmPassword,
-            Model model) {
-
+            Model model
+    ) {
         if (!password.equals(confirmPassword)) {
             model.addAttribute("errorMessage", "Passwords do not match.");
             return "registration";
         }
 
-        if (userRepository.findByUsername(username).isEmpty()) {
-            Role userRole = roleRepository.findByName("ROLE_USER")
+        if (userService.findByUsername(username).isEmpty()) {
+            Role userRole = roleService.findByName("ROLE_USER")
                     .orElseThrow(() -> new RuntimeException("ROLE_USER not found"));
 
             User user = new User();
@@ -55,7 +50,7 @@ public class DefaultController {
             user.setPassword(passwordEncoder.encode(password));
             user.setRoles(Set.of(userRole));
 
-            userRepository.save(user);
+            userService.save(user);
         } else {
             model.addAttribute(
                     "errorMessage",
@@ -70,6 +65,6 @@ public class DefaultController {
     public String showProfile(Authentication authentication, Model model) {
         User user = (User) authentication.getPrincipal();
         model.addAttribute("user", user);
-        return "profile";
+        return "user/profile";
     }
 }

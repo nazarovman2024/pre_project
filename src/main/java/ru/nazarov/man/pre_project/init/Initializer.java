@@ -3,27 +3,31 @@ package ru.nazarov.man.pre_project.init;
 import jakarta.annotation.PostConstruct;
 import org.springframework.transaction.annotation.Transactional;
 import ru.nazarov.man.pre_project.entities.*;
-import ru.nazarov.man.pre_project.repositories.*;
+import ru.nazarov.man.pre_project.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
+import java.util.logging.Logger;
 
 @Component
+@Transactional
 public class Initializer {
 
-    private final RoleRepository roleRepository;
-    private final UserRepository userRepository;
+    private static final Logger logger = Logger.getLogger(String.valueOf(Initializer.class));
+
+    private final RoleService roleService;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public Initializer(RoleRepository roleRepository,
-                       UserRepository userRepository,
+    public Initializer(RoleService roleService,
+                       UserService userService,
                        PasswordEncoder passwordEncoder
     ) {
-        this.roleRepository = roleRepository;
-        this.userRepository = userRepository;
+        this.roleService = roleService;
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -34,41 +38,38 @@ public class Initializer {
         initUser();
     }
 
-    @Transactional
     public void clearDatabase() {
-        userRepository.deleteAll();
-        roleRepository.deleteAll();
+        userService.deleteAll();
+        roleService.deleteAll();
     }
 
-    @Transactional
     public void initRole() {
         try {
-            if (roleRepository.findByName("ROLE_USER").isEmpty()) {
+            if (roleService.findByName("ROLE_USER").isEmpty()) {
                 Role userRole = new Role();
                 userRole.setName("ROLE_USER");
-                roleRepository.save(userRole);
+                roleService.save(userRole);
             }
 
-            if (roleRepository.findByName("ROLE_ADMIN").isEmpty()) {
+            if (roleService.findByName("ROLE_ADMIN").isEmpty()) {
                 Role adminRole = new Role();
                 adminRole.setName("ROLE_ADMIN");
-                roleRepository.save(adminRole);
+                roleService.save(adminRole);
             }
 
-            System.out.println("Roles initialized.");
+            logger.info("Roles initialized.");
         } catch (Exception e) {
-            System.err.println("Error during role initialization: " + e.getMessage());
+            logger.warning("Error during role initialization: " + e.getMessage());
             throw e;
         }
     }
 
-    @Transactional
     public void initUser() {
         try {
-            if (userRepository.findByUsername("admin").isEmpty()) {
-                Role adminRole = roleRepository.findByName("ROLE_ADMIN")
+            if (userService.findByUsername("admin").isEmpty()) {
+                Role adminRole = roleService.findByName("ROLE_ADMIN")
                         .orElseThrow(() -> new RuntimeException("ADMIN not found"));
-                Role userRole = roleRepository.findByName("ROLE_USER")
+                Role userRole = roleService.findByName("ROLE_USER")
                         .orElseThrow(() -> new RuntimeException("USER not found"));
 
                 User admin = new User();
@@ -76,12 +77,12 @@ public class Initializer {
                 admin.setPassword(passwordEncoder.encode("admin"));
                 admin.setRoles(Set.of(adminRole, userRole));
 
-                userRepository.save(admin);
+                userService.save(admin);
             }
 
-            System.out.println("Users initialized.");
+            logger.info("Users initialized.");
         } catch (Exception e) {
-            System.err.println("Error during user initialization: " + e.getMessage());
+            logger.warning("Error during user initialization: " + e.getMessage());
             throw e;
         }
     }
