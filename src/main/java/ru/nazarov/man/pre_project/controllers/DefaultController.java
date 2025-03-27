@@ -29,6 +29,14 @@ public class DefaultController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @GetMapping("/registration")
+    public String registration(
+            Model model
+    ) {
+        model.addAttribute("user", new User());
+        return "registration";
+    }
+
     @PostMapping("/registration")
     public String registerUser(
             @RequestParam String username,

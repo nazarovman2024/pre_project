@@ -4,6 +4,41 @@
     <meta charset="UTF-8">
     <title>Admin</title>
     <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #6f42c1;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+            --info-color: #007bff;
+            --warning-color: #ffc107;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
         .btn {
             display: inline-block;
             padding: 10px 20px;
@@ -11,85 +46,108 @@
             cursor: pointer;
             text-align: center;
             text-decoration: none;
-            outline: none;
-            color: #fff;
             border: none;
-            border-radius: 5px;
-            box-shadow: 0 4px #999;
+            border-radius: 4px;
             transition: all 0.3s;
-            margin: 5px;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .profile-btn {
-            background-color: #4CAF50;
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .profile-btn:hover {
-            background-color: #3e8e41;
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
         }
 
-        .profile-btn:active {
-            box-shadow: 0 2px #666;
-            transform: translateY(2px);
+        .btn-primary {
+            background-color: var(--primary-color);
         }
 
-        .logout-btn {
-            background-color: #ff4444;
+        .btn-secondary {
+            background-color: var(--secondary-color);
         }
 
-        .logout-btn:hover {
-            background-color: #cc0000;
+        .btn-danger {
+            background-color: var(--danger-color);
         }
 
-        .logout-btn:active {
-            box-shadow: 0 2px #666;
-            transform: translateY(2px);
+        .btn-success {
+            background-color: var(--success-color);
         }
 
-        .users-btn {
-            background-color: #2196F3;
+        .btn-info {
+            background-color: var(--info-color);
         }
 
-        .users-btn:hover {
-            background-color: #0b7dda;
-        }
-
-        .users-btn:active {
-            box-shadow: 0 2px #666;
-            transform: translateY(2px);
-        }
-
-        .create-user-btn {
-            background-color: #ff9800;
-        }
-
-        .create-user-btn:hover {
-            background-color: #e68a00;
-        }
-
-        .create-user-btn:active {
-            box-shadow: 0 2px #666;
-            transform: translateY(2px);
+        .btn-warning {
+            background-color: var(--warning-color);
         }
 
         .button-container {
-            margin: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        .button-card {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .button-card h2 {
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-<div class="button-container">
-    <a href="../profile" class="btn profile-btn">Profile</a>
-
-    <a href="../admin/users" class="btn users-btn">Users</a>
-
-    <a href="../admin/new" class="btn create-user-btn">Create User</a>
-
+<div class="page-header">
+    <h1>Admin</h1>
     <form th:action="@{/logout}" method="post" style="display: inline;">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <button type="submit" class="btn logout-btn">Logout</button>
+        <button type="submit" class="btn btn-danger">Logout</button>
     </form>
+</div>
+
+<div class="button-container">
+    <div class="button-card">
+        <h2>Administration</h2>
+        <div class="button-group">
+            <a href="../profile" class="btn btn-primary">Profile</a>
+            <a href="../admin/users" class="btn btn-info">Users Management</a>
+            <a href="../admin/new" class="btn btn-success">Create New User</a>
+        </div>
+    </div>
 </div>
 </body>
 </html>
