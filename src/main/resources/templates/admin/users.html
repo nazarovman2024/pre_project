@@ -1,135 +1,47 @@
+<!--
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Users Management</title>
+  <title>Admin Panel</title>
+  &lt;!&ndash; Bootstrap CSS &ndash;&gt;
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    :root {
-      --primary-color: #4CAF50;
-      --secondary-color: #6f42c1;
-      --danger-color: #dc3545;
-      --success-color: #28a745;
-      --info-color: #007bff;
-      --warning-color: #ffc107;
-      --light-color: #f8f9fa;
-      --dark-color: #343a40;
+    .sidebar {
+      background-color: #343a40;
+      color: white;
+      height: 100vh;
+      position: fixed;
+      width: 250px;
+      padding-top: 20px;
     }
 
-    body {
-      font-family: 'Arial', sans-serif;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f5f5f5;
-      color: #333;
-      line-height: 1.6;
+    .sidebar a {
+      color: rgba(255, 255, 255, 0.8);
+      padding: 10px 15px;
+      display: block;
+      text-decoration: none;
+      transition: all 0.3s;
     }
 
-    h1, h2, h3 {
-      color: var(--dark-color);
-      margin-bottom: 1rem;
+    .sidebar a:hover {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.1);
     }
 
-    .page-header {
+    .sidebar a.active {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .user-info-header {
+      background-color: #f8f9fa;
+      padding: 10px 20px;
+      margin-bottom: 20px;
+      border-radius: 5px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 8px 16px;
-      font-size: 14px;
-      cursor: pointer;
-      text-align: center;
-      text-decoration: none;
-      border: none;
-      border-radius: 4px;
-      transition: all 0.3s;
-      color: white;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn:hover {
-      opacity: 0.9;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-primary {
-      background-color: var(--primary-color);
-    }
-
-    .btn-secondary {
-      background-color: var(--secondary-color);
-    }
-
-    .btn-danger {
-      background-color: var(--danger-color);
-    }
-
-    .btn-success {
-      background-color: var(--success-color);
-    }
-
-    .btn-info {
-      background-color: var(--info-color);
-    }
-
-    .card {
-      background-color: white;
-      padding: 25px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      margin-bottom: 30px;
-    }
-
-    .card-header {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 15px;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-      background-color: white;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      border-radius: 5px;
-      overflow: hidden;
-    }
-
-    th, td {
-      padding: 12px 15px;
-      text-align: left;
-      border-bottom: 1px solid #dddddd;
-    }
-
-    th {
-      background-color: var(--primary-color);
-      color: white;
-    }
-
-    tr:hover {
-      background-color: #f9f9f9;
     }
 
     .role-badge {
@@ -142,70 +54,674 @@
       margin-right: 5px;
     }
 
-    .text-right {
-      text-align: right;
+    .nav-tabs {
+      margin-bottom: 20px;
     }
 
-    .inline-form {
-      display: inline;
+    .table-container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
     }
 
-    @media (max-width: 768px) {
-      .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+    .table thead {
+      background-color: #f8f9fa;
+    }
 
-      .action-buttons {
-        width: 100%;
-        justify-content: flex-end;
+    .table tbody tr:nth-child(odd) {
+      background-color: #f8f9fa;
+    }
+
+    .table tbody tr:nth-child(even) {
+      background-color: white;
+    }
+
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+
+  </style>
+</head>
+<body>
+<div class="container py-4">
+  &lt;!&ndash; User info header &ndash;&gt;
+  <div class="user-info-header">
+    <div>
+      <span>
+        <strong th:text="${#authentication.principal.id} + ' # ' + ${#authentication.principal.username}"></strong>
+      </span>
+      <span th:text="' with roles: '"></span>
+      <span th:each="role : ${#authentication.principal.authorities}" class="role-badge"
+            th:text="${#strings.replace(role.name,'ROLE_','')}"></span>
+    </div>
+    <div class="text-end">
+      <form th:action="@{/logout}" method="post" class="d-inline">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit" class="btn btn-outline-secondary btn-sm">
+          <i class="fas fa-sign-out-alt me-1"></i> Logout
+        </button>
+      </form>
+    </div>
+  </div>
+
+  &lt;!&ndash; Sidebar Navigation &ndash;&gt;
+  <div class="sidebar">
+    <nav>
+      <a href="#" class="active"><i class="fas me-2"></i>Admin</a>
+      <a href="../../profile"><i class="fas me-2"></i>User</a>
+    </nav>
+  </div>
+
+  &lt;!&ndash; Page header and tabs &ndash;&gt;
+  <h2>Admin panel</h2>
+
+  <ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <a class="nav-link active" href="#">Users table</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" th:href="@{/admin/new}">New User</a>
+    </li>
+  </ul>
+
+  &lt;!&ndash; Action buttons &ndash;&gt;
+  <div class="d-flex justify-content-between mb-3">
+    <h4>All users</h4>
+  </div>
+
+  &lt;!&ndash; Users table &ndash;&gt;
+  <div class="table-container">
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>User</th>
+        <th>Role</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="user, userStat : ${users}"
+          th:classappend="${userStat.odd} ? 'table-light' : 'table-default'">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.username}"></td>
+        <td>
+          <span th:each="role, roleStat : ${user.roles}" class="role-badge">
+            <span th:text="${#strings.replace(role.name,'ROLE_','')}"></span>
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-primary edit" data-bs-toggle="modal"
+                  data-bs-target="#editUserModal"
+                  th:attr="data-user-id=${user.id},
+                 data-user-username=${user.username},
+                 data-user-roles=${user.roles}">
+            Edit
+          </button>
+          <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                  data-bs-target="#deleteUserModal"
+                  th:attr="data-user-id=${user.id},
+                 data-user-username=${user.username},
+                 data-user-roles=${user.roles}">
+            Delete
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+&lt;!&ndash; Edit User Modal &ndash;&gt;
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editUserModalLabel">Edit user</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editUserForm" th:action="@{/admin/edit}" method="post">
+          <input type="hidden" id="editUserId" name="id">
+
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-control" id="editUsername" name="username" readonly>
+          </div>
+
+          <div class="mb-3">
+            <label for="editPassword" class="form-label">New Password</label>
+            <input type="password" class="form-control" id="editPassword" name="password" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="editConfirmPassword" class="form-label">Confirm New Password</label>
+            <input type="password" class="form-control" id="editConfirmPassword" name="confirmPassword" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Roles</label>
+            <div class="d-flex flex-wrap">
+              <div th:each="role : ${allRoles}" class="form-check me-3">
+                <input class="form-check-input" type="checkbox"
+                       th:id="${'editRole_' + role.id}"
+                       th:value="${role.id}" name="roles">
+                <label class="form-check-label"
+                       th:for="${'editRole_' + role.id}"
+                       th:text="${#strings.replace(role.authority,'ROLE_','')}"></label>
+              </div>
+            </div>
+          </div>
+
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="submitEditForm()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+&lt;!&ndash; Delete User Modal &ndash;&gt;
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteUserModalLabel">Delete user</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="deleteUserForm" method="post">
+          <div class="user-details">
+            <label>ID</label>
+            <div id="deleteUserId"></div>
+          </div>
+
+          <div class="user-details">
+            <label>Username</label>
+            <div id="deleteUsername"></div>
+          </div>
+
+          <div class="user-details">
+            <label>Roles</label>
+            <div id="deleteUserRoles"></div>
+          </div>
+
+          <input type="hidden" id="deleteUserCsrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        </form>
+        <div class="alert alert-warning mt-3">
+          Are you sure you want to delete this user? This action cannot be undone.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" onclick="submitDeleteForm()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+&lt;!&ndash; Bootstrap JS Bundle with Popper &ndash;&gt;
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Initialize edit modal with user data
+  document.getElementById('editUserModal').addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    const userId = button.getAttribute('data-user-id');
+    const username = button.getAttribute('data-user-username');
+    const roles = JSON.parse(button.getAttribute('data-user-roles'));
+
+    const modal = this;
+    modal.querySelector('#editUserId').value = userId;
+    modal.querySelector('#editUsername').value = username;
+
+    // Reset all checkboxes
+    modal.querySelectorAll('.form-check-input').forEach(checkbox => {
+      checkbox.checked = false;
+    });
+
+    // Set checked roles
+    roles.forEach(role => {
+      const checkbox = modal.querySelector(`input[value="${role.id}"]`);
+      if (checkbox) {
+        checkbox.checked = true;
       }
+    });
+
+    // Clear password fields
+    modal.querySelector('#editPassword').value = '';
+    modal.querySelector('#editConfirmPassword').value = '';
+  });
+
+  function submitEditForm() {
+    const form = document.getElementById('editUserForm');
+    const password = form.querySelector('#editPassword').value;
+    const confirmPassword = form.querySelector('#editConfirmPassword').value;
+
+    if (password !== confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+
+    form.submit();
+  }
+
+  // Initialize delete modal with user data
+  document.getElementById('deleteUserModal').addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    const userId = button.getAttribute('data-user-id');
+    const firstName = button.getAttribute('data-user-firstName');
+    const lastName = button.getAttribute('data-user-lastName');
+    const age = button.getAttribute('data-user-age');
+    const email = button.getAttribute('data-user-email');
+    const roles = JSON.parse(button.getAttribute('data-user-roles'));
+
+    const modal = this;
+    modal.querySelector('#deleteUserId').textContent = userId;
+    modal.querySelector('#deleteFirstName').textContent = firstName;
+    modal.querySelector('#deleteLastName').textContent = lastName;
+    modal.querySelector('#deleteEmail').textContent = email;
+
+    // Format roles
+    const rolesContainer = modal.querySelector('#deleteUserRoles');
+    rolesContainer.innerHTML = '';
+    roles.forEach(role => {
+      const roleName = role.replace('ROLE_', '');
+      const badge = document.createElement('span');
+      badge.className = 'role-badge';
+      badge.textContent = roleName;
+      rolesContainer.appendChild(badge);
+    });
+
+    // Update form action
+    document.getElementById('deleteUserForm').action = `/admin/delete?id=${userId}`;
+  });
+
+  function submitEditForm() {
+    document.getElementById('editUserForm').submit();
+  }
+
+  function submitDeleteForm() {
+    document.getElementById('deleteUserForm').submit();
+  }
+</script>
+</body>
+</html>-->
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      padding-left: 250px;
+      background-color: #f8f9fa;
+    }
+
+    .sidebar {
+      background-color: #343a40;
+      color: white;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 250px;
+      padding-top: 20px;
+    }
+
+    .sidebar a {
+      color: rgba(255, 255, 255, 0.8);
+      padding: 10px 20px;
+      display: block;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .sidebar a:hover {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar a.active {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .user-info-header {
+      background-color: white;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      background-color: #e9ecef;
+      border-radius: 10px;
+      color: #495057;
+      font-size: 0.9em;
+      margin-right: 5px;
+    }
+
+    .nav-tabs {
+      border-bottom: none;
+      margin-bottom: 20px;
+    }
+
+    .nav-tabs .nav-link {
+      border: none;
+      color: #495057;
+      padding: 10px 20px;
+    }
+
+    .nav-tabs .nav-link.active {
+      color: #0d6efd;
+      background-color: transparent;
+      border-bottom: 2px solid #0d6efd;
+    }
+
+    .table-container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    .table thead {
+      background-color: #f8f9fa;
+    }
+
+    .table tbody tr:nth-child(odd) {
+      background-color: #f8f9fa;
+    }
+
+    .table tbody tr:nth-child(even) {
+      background-color: white;
+    }
+
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .main-content {
+      padding: 20px;
+    }
+
+    .page-header {
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
-<div class="page-header">
-  <h1>Users Management</h1>
-  <div class="action-buttons">
-    <form th:action="@{/logout}" method="post" class="inline-form">
-      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-      <button type="submit" class="btn btn-danger">Logout</button>
-    </form>
+<!-- Sidebar Navigation -->
+<div class="sidebar">
+  <nav>
+    <a href="#" class="active"><i class="fas fa-user-shield me-2"></i>Admin</a>
+    <a href="../../profile"><i class="fas fa-user me-2"></i>User</a>
+  </nav>
+</div>
+
+<div class="main-content">
+  <!-- User info header -->
+  <div class="user-info-header">
+    <div>
+        <span>
+          <strong th:text="${#authentication.principal.username}"></strong>
+        </span>
+      <span th:text="' with roles: '"></span>
+      <span th:each="role : ${#authentication.principal.authorities}" class="role-badge"
+            th:text="${#strings.replace(role.name,'ROLE_','')}"></span>
+    </div>
+    <div class="text-end">
+      <form th:action="@{/logout}" method="post" class="d-inline">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit" class="btn btn-outline-secondary btn-sm">
+          <i class="fas fa-sign-out-alt me-1"></i> Logout
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Page header and tabs -->
+  <div class="page-header">
+    <h2>Admin panel</h2>
+  </div>
+
+  <ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <a class="nav-link active" href="#">Users table</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" th:href="@{/admin/new}">New User</a>
+    </li>
+  </ul>
+
+  <!-- Action buttons -->
+  <div class="d-flex justify-content-between mb-3">
+    <h4>All users</h4>
+  </div>
+
+  <!-- Users table -->
+  <div class="table-container">
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>User</th>
+        <th>Role</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="user, userStat : ${users}"
+          th:classappend="${userStat.odd} ? 'table-light' : 'table-default'">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.username}"></td>
+        <td>
+            <span th:each="role, roleStat : ${user.roles}" class="role-badge">
+              <span th:text="${#strings.replace(role.name,'ROLE_','')}"></span>
+            </span>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-primary edit" data-bs-toggle="modal"
+                  data-bs-target="#editUserModal"
+                  th:attr="data-user-id=${user.id},
+                   data-user-username=${user.username},
+                   data-user-roles=${user.roles}">
+            Edit
+          </button>
+          <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                  data-bs-target="#deleteUserModal"
+                  th:attr="data-user-id=${user.id},
+                   data-user-username=${user.username},
+                   data-user-roles=${user.roles}">
+            Delete
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
-<div class="text-right" style="margin-bottom: 20px;">
-  <a th:href="@{/admin/new}" class="btn btn-success">Add New User</a>
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editUserModalLabel">Edit user</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editUserForm" th:action="@{/admin/edit}" method="post">
+          <input type="hidden" id="editUserId" name="id">
+
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-control" id="editUsername" name="username" readonly>
+          </div>
+
+          <div class="mb-3">
+            <label for="editPassword" class="form-label">New Password</label>
+            <input type="password" class="form-control" id="editPassword" name="password" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="editConfirmPassword" class="form-label">Confirm New Password</label>
+            <input type="password" class="form-control" id="editConfirmPassword" name="confirmPassword" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Roles</label>
+            <div class="d-flex flex-wrap">
+              <div th:each="role : ${allRoles}" class="form-check me-3">
+                <input class="form-check-input" type="checkbox"
+                       th:id="${'editRole_' + role.id}"
+                       th:value="${role.id}" name="roles">
+                <label class="form-check-label"
+                       th:for="${'editRole_' + role.id}"
+                       th:text="${#strings.replace(role.authority,'ROLE_','')}"></label>
+              </div>
+            </div>
+          </div>
+
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="submitEditForm()">Save changes</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<table>
-  <thead>
-  <tr>
-    <th>ID</th>
-    <th>Username</th>
-    <th>Roles</th>
-    <th>Actions</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="user : ${users}">
-    <td th:text="${user.id}"></td>
-    <td th:text="${user.username}"></td>
-    <td>
-        <span th:each="role, roleStat : ${user.roles}" class="role-badge">
-          <span th:text="${#strings.replace(role.name,'ROLE_','')}"></span>
-          <span th:unless="${roleStat.last}">, </span>
-        </span>
-    </td>
-    <td>
-      <a th:href="@{/admin/edit(id=${user.id})}" class="btn btn-info">Edit</a>
-      <form th:action="@{/admin/delete(id=${user.id})}" method="post" class="inline-form">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <button type="submit" class="btn btn-danger">Delete</button>
-      </form>
-    </td>
-  </tr>
-  </tbody>
-</table>
+<!-- Delete User Modal -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteUserModalLabel">Delete user</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="deleteUserForm" method="post">
+          <div class="user-details">
+            <label>ID</label>
+            <div id="deleteUserId"></div>
+          </div>
+
+          <div class="user-details">
+            <label>Username</label>
+            <div id="deleteUsername"></div>
+          </div>
+
+          <div class="user-details">
+            <label>Roles</label>
+            <div id="deleteUserRoles"></div>
+          </div>
+
+          <input type="hidden" id="deleteUserCsrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        </form>
+        <div class="alert alert-warning mt-3">
+          Are you sure you want to delete this user? This action cannot be undone.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" onclick="submitDeleteForm()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Initialize edit modal with user data
+  document.getElementById('editUserModal').addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    const userId = button.getAttribute('data-user-id');
+    const username = button.getAttribute('data-user-username');
+    const roles = JSON.parse(button.getAttribute('data-user-roles'));
+
+    const modal = this;
+    modal.querySelector('#editUserId').value = userId;
+    modal.querySelector('#editUsername').value = username;
+
+    // Reset all checkboxes
+    modal.querySelectorAll('.form-check-input').forEach(checkbox => {
+      checkbox.checked = false;
+    });
+
+    // Set checked roles
+    roles.forEach(role => {
+      const checkbox = modal.querySelector(`input[value="${role.id}"]`);
+      if (checkbox) {
+        checkbox.checked = true;
+      }
+    });
+
+    // Clear password fields
+    modal.querySelector('#editPassword').value = '';
+    modal.querySelector('#editConfirmPassword').value = '';
+  });
+
+  function submitEditForm() {
+    const form = document.getElementById('editUserForm');
+    const password = form.querySelector('#editPassword').value;
+    const confirmPassword = form.querySelector('#editConfirmPassword').value;
+
+    if (password !== confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+
+    form.submit();
+  }
+
+  // Initialize delete modal with user data
+  document.getElementById('deleteUserModal').addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    const userId = button.getAttribute('data-user-id');
+    const username = button.getAttribute('data-user-username');
+    const roles = JSON.parse(button.getAttribute('data-user-roles'));
+
+    const modal = this;
+    modal.querySelector('#deleteUserId').textContent = userId;
+    modal.querySelector('#deleteUsername').textContent = username;
+
+    // Format roles
+    const rolesContainer = modal.querySelector('#deleteUserRoles');
+    rolesContainer.innerHTML = '';
+    roles.forEach(role => {
+      const roleName = role.name.replace('ROLE_', '');
+      const badge = document.createElement('span');
+      badge.className = 'role-badge';
+      badge.textContent = roleName;
+      rolesContainer.appendChild(badge);
+    });
+
+    // Update form action
+    document.getElementById('deleteUserForm').action = `/admin/delete?id=${userId}`;
+  });
+
+  function submitDeleteForm() {
+    document.getElementById('deleteUserForm').submit();
+  }
+</script>
 </body>
 </html>

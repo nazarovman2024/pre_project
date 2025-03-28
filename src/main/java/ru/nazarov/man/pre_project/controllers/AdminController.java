@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.nazarov.man.pre_project.entities.*;
 import ru.nazarov.man.pre_project.services.*;
 
@@ -34,14 +35,15 @@ public class AdminController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @GetMapping("/users")
+    @GetMapping()
     public String manage(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             Model model
     ) {
         model.addAttribute("users", userService.getUsers(page, size));
-        return "admin/users";
+        model.addAttribute("allRoles", roleService.getAll()); // Add this line
+        return "admin/admin";
     }
 
     @GetMapping("/edit")
@@ -53,39 +55,48 @@ public class AdminController {
         if (userOptional.isPresent()) {
             model.addAttribute("user", userOptional.get());
             model.addAttribute("allRoles", roleService.getAll());
-            return "admin/edit";
+            return "admin/admin"; // Return the main admin page
         } else {
-            return "redirect:/admin/users";
+            return "redirect:/admin";
         }
     }
 
     @PostMapping("/edit")
     public String save(
-            @ModelAttribute("user") @Valid User user,
-            BindingResult bindingResult,
+            @RequestParam("id") Long id,
             @RequestParam("username") String username,
-            @RequestParam("roles") List<Long> roleIds,
+            @RequestParam(value = "roles", required = false) List<Long> roleIds,
             @RequestParam String password,
             @RequestParam String confirmPassword,
-            Model model
-            ) {
+            Model model,
+            RedirectAttributes redirectAttributes
+    ) {
         if (!password.equals(confirmPassword)) {
-            model.addAttribute("errorMessage", "Passwords do not match.");
-            return "admin/edit";
+            redirectAttributes.addFlashAttribute("errorMessage", "Passwords do not match.");
+            return "redirect:/admin";
         }
 
-        Set<Role> roles = roleIds.stream()
-                .map(roleService::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
+        Optional<User> userOptional = userService.findUser(id);
+        if (userOptional.isEmpty()) {
+            return "redirect:/admin";
+        }
+
+        User user = userOptional.get();
+
+        Set<Role> roles = roleIds != null ?
+                roleIds.stream()
+                        .map(roleService::findById)
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(Collectors.toSet()) :
+                user.getRoles();
 
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setRoles(roles);
         userService.save(user);
 
-        return "redirect:/admin/users?success=UserUpdated";
+        return "redirect:/admin?success=UserUpdated";
     }
 
     @GetMapping("/new")
@@ -124,13 +135,13 @@ public class AdminController {
         user.setRoles(roles);
         userService.save(user);
 
-        return "redirect:/admin/users?creationSuccess=true";
+        return "redirect:/admin?creationSuccess=true";
     }
     @PostMapping("/delete")
     public String deleteUser(
             @RequestParam("id") long id
     ) {
         userService.delete(id);
-        return "redirect:/admin/users?deleteSuccess=true";
+        return "redirect:/admin?deleteSuccess=true";
     }
 }

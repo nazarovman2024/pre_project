@@ -33,7 +33,7 @@ public class Initializer {
 
     @PostConstruct
     public void init() {
-        clearDatabase();
+//        clearDatabase();
         initRole();
         initUser();
     }
