@@ -9,237 +9,134 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #4e73df;
-            --secondary-color: #f8f9fc;
-            --accent-color: #e74a3b;
-            --text-color: #5a5c69;
-            --light-gray: #eaecf4;
-            --dark-gray: #d1d3e2;
-        }
-
         body {
-            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--secondary-color);
-            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
         }
 
         .top-bar {
-            background-color: var(--primary-color);
+            background-color: #343a40;
             color: white;
-            padding: 1rem 1.5rem;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            padding: 10px 20px;
         }
 
-        .top-role-badge {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            background-color: rgba(78, 115, 223, 0.1);
-            border-radius: 0.35rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-right: 0.5rem;
+        .container-fluid {
+            display: flex;
+            height: calc(100vh - 48px);
+        }
+
+        .nav-panel {
+            width: 250px;
+            background-color: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
+            padding: 12px 20px;
+            color: #0d6efd;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(13, 110, 253, 0.1);
+        }
+
+        .nav-link.active {
+            background-color: #0d6efd;
+            color: white;
+            border-left: 4px solid #0d6efd;
+        }
+
+        .content {
+            flex: 1;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 0;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 1px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #0d6efd;
+            margin-right: 15px;
+        }
+
+        .tab.active {
+            color: #495057;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-bottom: 1px solid white;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            top: 1px;
+        }
+
+        .users-container {
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background-color: white;
+        }
+
+        .users-header {
+            background-color: #f8f9fa;
+            padding: 12px 20px;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: bold;
+        }
+
+        .users-content {
+            padding: 20px;
         }
 
         .role-badge {
             display: inline-block;
             padding: 0.25rem 0.5rem;
-            background-color: rgba(78, 115, 223, 0.1);
-            color: var(--primary-color);
+            background-color: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
             border-radius: 0.35rem;
             font-size: 0.75rem;
             font-weight: 600;
             margin-right: 0.5rem;
         }
 
-        .container-fluid {
-            display: flex;
-            min-height: calc(100vh - 64px);
-        }
-
-        .nav-panel {
-            width: 14rem;
-            background: linear-gradient(180deg, var(--primary-color) 10%, #224abe 100%);
-            color: white;
-            transition: all 0.15s;
-        }
-
-        .nav-link {
-            padding: 1rem;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            border-left: 0.25rem solid transparent;
-            transition: all 0.3s;
-        }
-
-        .nav-link:hover {
-            color: white;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-link.active {
-            color: white;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-left: 0.25rem solid white;
-            font-weight: 700;
-        }
-
-        .nav-link i {
-            width: 1.5rem;
-            text-align: center;
-            margin-right: 0.5rem;
-        }
-
-        .content {
-            flex: 1;
-            padding: 1.5rem;
-            background-color: var(--secondary-color);
-        }
-
-        .card {
-            border: none;
-            border-radius: 0.35rem;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
-            margin-bottom: 1.5rem;
-        }
-
-        .card-header {
-            background-color: #f8f9fc;
-            border-bottom: 1px solid #e3e6f0;
-            padding: 1rem 1.35rem;
-            font-weight: 600;
-            color: #4e73df;
-        }
-
-        .tabs {
-            border-bottom: 1px solid #e3e6f0;
-            margin-bottom: 1.5rem;
-        }
-
-        .tab {
-            padding: 0.75rem 1.5rem;
-            text-decoration: none;
-            color: var(--text-color);
-            font-weight: 600;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-        }
-
-        .tab:hover {
-            color: var(--primary-color);
-            border-bottom-color: var(--dark-gray);
-        }
-
-        .tab.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-        }
-
-        .table {
-            color: var(--text-color);
-        }
-
-        .table th {
-            border-top: none;
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        .btn-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 1.75rem;
-            height: 1.75rem;
-            padding: 0;
-        }
-
         [popover] {
-            padding: 1.5rem;
+            padding: 20px;
             width: 500px;
-            max-width: 90vw;
-            border: none;
-            border-radius: 0.5rem;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        }
-
-        [popover]::backdrop {
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .popover-header {
-            border-bottom: 1px solid #e3e6f0;
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
+            max-width: 80vw;
         }
 
         .popover-footer {
             display: flex;
             justify-content: flex-end;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid #e3e6f0;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .btn-primary:hover {
-            background-color: #2e59d9;
-            border-color: #2653d4;
-        }
-
-        .btn-danger {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-
-        .btn-danger:hover {
-            background-color: #e02d1b;
-            border-color: #d52a1a;
-        }
-
-        .user-details {
-            margin-bottom: 1rem;
+            gap: 10px;
+            margin-top: 20px;
         }
 
         .user-details label {
             font-weight: 600;
-            color: var(--text-color);
+            color: #495057;
             display: block;
             margin-bottom: 0.25rem;
         }
 
         .user-details div {
             padding: 0.5rem;
-            background-color: var(--light-gray);
+            background-color: #e9ecef;
             border-radius: 0.25rem;
         }
 
         #users-table, #new-user {
             display: none;
-        }
-
-        /* Animation for popovers */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        [popover] {
-            animation: fadeIn 0.2s ease-out;
         }
     </style>
 </head>
@@ -251,7 +148,7 @@
         <span>
             <strong th:text="${#authentication.principal.id} + ' # ' + ${#authentication.principal.username}"></strong>
             <span th:text="' with roles: '"></span>
-            <span th:each="role : ${#authentication.principal.authorities}" class="top-role-badge"
+            <span th:each="role : ${#authentication.principal.authorities}" class="role-badge"
                   th:text="${#strings.replace(role.name,'ROLE_','')}">&nbsp;</span>
         </span>
     </div>
@@ -270,7 +167,7 @@
 <div class="container-fluid">
     <!-- Navigation panel -->
     <div class="nav-panel d-flex flex-column">
-        <a sec:authorize="hasRole('USER')"
+        <a sec:authorize="hasRole('ADMIN')"
            href="#" class="nav-link active">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Admin Dashboard</span>
@@ -284,189 +181,151 @@
 
     <!-- Content area -->
     <div class="content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0"><i class="fas fa-cog me-2"></i>Admin Panel</h2>
-        </div>
+        <h2><i class="fas fa-cog me-2"></i>Admin Panel</h2>
 
         <div class="tabs">
-            <a href="#users-table" class="tab active"><i class="fas fa-table me-1"></i> Users Table</a>
-            <a href="#new-user" class="tab"><i class="fas fa-user-plus me-1"></i> New User</a>
+            <a href="#users-table" class="tab active">Users Table</a>
+            <a href="#new-user" class="tab">New User</a>
         </div>
 
         <!-- Users Table Section -->
-        <div id="users-table" class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
+        <div id="users-table" class="users-container">
+            <div class="users-header d-flex justify-content-between align-items-center">
                 <span><i class="fas fa-users me-2"></i>All Users</span>
                 <span class="badge bg-primary rounded-pill" th:text="${users.size()}"></span>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Username</th>
-                            <th>Roles</th>
-                            <th class="text-end">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="user, userStat : ${users}">
-                            <td th:text="${user.id}"></td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar me-2">
-                                        <i class="fas fa-user-circle fa-lg text-primary"></i>
+            <div class="users-content">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user, userStat : ${users}">
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.username}"></td>
+                        <td>
+                            <span th:each="role : ${user.roles}" class="role-badge">
+                                <span th:text="${#strings.replace(role.name,'ROLE_','')}"></span>
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <div class="d-flex justify-content-end gap-2">
+                                <button class="btn btn-sm btn-primary edit"
+                                        th:attr="popovertarget='edit-popover-' + ${user.id}">
+                                    Edit
+                                </button>
+
+                                <button class="btn btn-sm btn-danger"
+                                        th:attr="popovertarget='delete-popover-' + ${user.id}">
+                                    Delete
+                                </button>
+                            </div>
+
+                            <!-- Edit User Popover -->
+                            <div th:id="'edit-popover-' + ${user.id}" popover class="edit-popover">
+                                <h5>Edit user</h5>
+                                <form th:action="@{/admin}" method="post">
+                                    <input type="hidden" name="_method" value="PATCH"/>
+                                    <input type="hidden" name="id" th:value="${user.id}">
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Username</label>
+                                        <input type="text" class="form-control" th:value="${user.username}" readonly>
                                     </div>
-                                    <div th:text="${user.username}"></div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex flex-wrap">
-                                    <span th:each="role : ${user.roles}" class="role-badge me-1 mb-1">
-                                        <i class="fas fa-shield-alt me-1"></i>
-                                        <span th:text="${#strings.replace(role.name,'ROLE_','')}"></span>
-                                    </span>
-                                </div>
-                            </td>
-                            <td class="text-end">
-                                <div class="d-flex justify-content-end gap-2">
-                                    <button class="btn btn-sm btn-primary edit btn-icon"
-                                            th:attr="popovertarget='edit-popover-' + ${user.id}">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
 
-                                    <button class="btn btn-sm btn-danger btn-icon"
-                                            th:attr="popovertarget='delete-popover-' + ${user.id}">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-
-                                <!-- Edit User Popover -->
-                                <div th:id="'edit-popover-' + ${user.id}" popover class="edit-popover">
-                                    <div class="popover-header">
-                                        <i class="fas fa-edit me-2"></i>Edit User
+                                    <div class="mb-3">
+                                        <label for="editPassword" class="form-label">New Password</label>
+                                        <input type="password" class="form-control" id="editPassword"
+                                               name="password" placeholder="Leave blank to keep current">
                                     </div>
-                                    <form th:action="@{/admin}" method="post">
-                                        <input type="hidden" name="_method" value="PATCH"/>
-                                        <input type="hidden" name="id" th:value="${user.id}">
 
-                                        <div class="mb-3">
-                                            <label class="form-label">Username</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                                <input type="text" class="form-control" th:value="${user.username}" readonly>
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="editPassword" class="form-label">New Password</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                                <input type="password" class="form-control" id="editPassword"
-                                                       name="password" placeholder="Leave blank to keep current">
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="editConfirmPassword" class="form-label">Confirm New Password</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                                <input type="password" class="form-control" id="editConfirmPassword"
-                                                       name="confirmPassword" placeholder="Confirm new password">
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Roles</label>
-                                            <div class="d-flex flex-wrap gap-3">
-                                                <div th:each="role : ${allRoles}" class="form-check">
-                                                    <input class="form-check-input" type="checkbox"
-                                                           th:id="${'editRole_' + role.id + '_' + user.id}"
-                                                           th:value="${role.id}" name="roles"
-                                                           th:checked="${#lists.contains(user.roles, role)}">
-                                                    <label class="form-check-label d-flex align-items-center"
-                                                           th:for="${'editRole_' + role.id + '_' + user.id}">
-                                                        <i class="fas fa-shield-alt me-2"></i>
-                                                        <span th:text="${#strings.replace(role.authority,'ROLE_','')}"></span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-
-                                        <div class="popover-footer">
-                                            <button type="button" class="btn btn-outline-secondary" onclick="this.closest('[popover]').hidePopover()">
-                                                <i class="fas fa-times me-1"></i> Cancel
-                                            </button>
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-save me-1"></i> Save Changes
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-
-                                <!-- Delete User Popover -->
-                                <div th:id="'delete-popover-' + ${user.id}" popover class="delete-popover">
-                                    <div class="popover-header">
-                                        <i class="fas fa-exclamation-triangle me-2 text-danger"></i>Delete User
+                                    <div class="mb-3">
+                                        <label for="editConfirmPassword" class="form-label">Confirm New Password</label>
+                                        <input type="password" class="form-control" id="editConfirmPassword"
+                                               name="confirmPassword" placeholder="Confirm new password">
                                     </div>
-                                    <form th:action="@{/admin/user/delete}" method="post">
-                                        <input type="hidden" name="id" th:value="${user.id}">
 
-                                        <div class="user-details">
-                                            <label>ID</label>
-                                            <div th:text="${user.id}"></div>
-                                        </div>
-
-                                        <div class="user-details">
-                                            <label>Username</label>
-                                            <div th:text="${user.username}"></div>
-                                        </div>
-
-                                        <div class="user-details">
-                                            <label>Roles</label>
-                                            <div>
-                                                <span th:each="role : ${user.roles}" class="role-badge">
-                                                    <i class="fas fa-shield-alt me-1"></i>
-                                                    <span th:text="${#strings.replace(role.name,'ROLE_','')}"></span>
-                                                </span>
+                                    <div class="mb-3">
+                                        <label class="form-label">Roles</label>
+                                        <div class="d-flex flex-wrap gap-3">
+                                            <div th:each="role : ${allRoles}" class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                       th:id="${'editRole_' + role.id + '_' + user.id}"
+                                                       th:value="${role.id}" name="roles"
+                                                       th:checked="${#lists.contains(user.roles, role)}">
+                                                <label class="form-check-label"
+                                                       th:for="${'editRole_' + role.id + '_' + user.id}"
+                                                       th:text="${#strings.replace(role.authority,'ROLE_','')}"></label>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="alert alert-danger mt-3">
-                                            <i class="fas fa-exclamation-circle me-2"></i>
-                                            <strong>Warning!</strong> This action cannot be undone. All data associated with this user will be permanently deleted.
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                                    <div class="popover-footer">
+                                        <button type="button" class="btn btn-secondary" popovertargetaction="hide">Close</button>
+                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Delete User Popover -->
+                            <div th:id="'delete-popover-' + ${user.id}" popover class="delete-popover">
+                                <h5>Delete user</h5>
+                                <form th:action="@{/admin/user/delete}" method="post">
+                                    <input type="hidden" name="id" th:value="${user.id}">
+
+                                    <div class="user-details">
+                                        <label>ID</label>
+                                        <div th:text="${user.id}"></div>
+                                    </div>
+
+                                    <div class="user-details">
+                                        <label>Username</label>
+                                        <div th:text="${user.username}"></div>
+                                    </div>
+
+                                    <div class="user-details">
+                                        <label>Roles</label>
+                                        <div>
+                                            <span th:each="role : ${user.roles}" class="role-badge">
+                                                <span th:text="${#strings.replace(role.name,'ROLE_','')}"></span>
+                                            </span>
                                         </div>
+                                    </div>
 
-                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <div class="alert alert-danger mt-3">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        <strong>Warning!</strong> This action cannot be undone.
+                                    </div>
 
-                                        <div class="popover-footer">
-                                            <button type="button" class="btn btn-outline-secondary" onclick="this.closest('[popover]').hidePopover()">
-                                                <i class="fas fa-times me-1"></i> Cancel
-                                            </button>
-                                            <button type="submit" class="btn btn-danger">
-                                                <i class="fas fa-trash-alt me-1"></i> Delete
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                                    <div class="popover-footer">
+                                        <button type="button" class="btn btn-secondary" popovertargetaction="hide">Close</button>
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
         <!-- New User Section -->
-        <div id="new-user" class="card">
-            <div class="card-header">
+        <div id="new-user" class="users-container">
+            <div class="users-header">
                 <i class="fas fa-user-plus me-2"></i>Add New User
             </div>
-            <div class="card-body">
-                <form th:action="@{/admin/user/new}" method="post" th:object="${userModel}" onsubmit="return handleNewUserSubmit(event)">
+            <div class="users-content">
+                <form th:action="@{/admin/user/new}" method="post" th:object="${userModel}">
                     <div class="row mb-4">
                         <div class="col-md-6 mb-3 mb-md-0">
                             <label for="newUsername" class="form-label">Username</label>
@@ -510,11 +369,9 @@
                             <div th:each="role : ${allRoles}" class="form-check">
                                 <input class="form-check-input" type="checkbox" th:id="${'newRole_' + role.id}"
                                        th:value="${role.id}" name="roles" th:field="*{roles}">
-                                <label class="form-check-label d-flex align-items-center"
-                                       th:for="${'newRole_' + role.id}">
-                                    <i class="fas fa-shield-alt me-2"></i>
-                                    <span th:text="${#strings.replace(role.authority,'ROLE_','')}"></span>
-                                </label>
+                                <label class="form-check-label"
+                                       th:for="${'newRole_' + role.id}"
+                                       th:text="${#strings.replace(role.authority,'ROLE_','')}"></label>
                             </div>
                         </div>
                     </div>
@@ -541,14 +398,11 @@
         const usersTableSection = document.getElementById('users-table');
         const newUserSection = document.getElementById('new-user');
 
-        // Function to switch tabs and update URL hash
+        // Function to switch tabs
         function switchTab(clickedTab) {
-            // Remove active class from all tabs
             tabs.forEach(tab => tab.classList.remove('active'));
-            // Add active class to clicked tab
             clickedTab.classList.add('active');
 
-            // Show/hide sections
             if (clickedTab.getAttribute('href') === '#users-table') {
                 usersTableSection.style.display = 'block';
                 newUserSection.style.display = 'none';
@@ -586,36 +440,6 @@
         // Handle back/forward navigation
         window.addEventListener('hashchange', initializeTab);
     });
-
-    // Function to handle new user form submission
-    function handleNewUserSubmit(event) {
-        event.preventDefault();
-        const form = event.target;
-
-        fetch(form.action, {
-            method: 'POST',
-            body: new FormData(form),
-            headers: {
-                'Accept': 'text/html'
-            }
-        })
-            .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url + '#users-table';
-                } else {
-                    return response.text().then(html => {
-                        document.open();
-                        document.write(html);
-                        document.close();
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-
-        return false;
-    }
 </script>
 </body>
 </html>
