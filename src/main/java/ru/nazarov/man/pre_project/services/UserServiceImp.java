@@ -5,25 +5,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.nazarov.man.pre_project.entities.User;
+import ru.nazarov.man.pre_project.repositories.RoleRepository;
 import ru.nazarov.man.pre_project.repositories.UserRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class UserServiceImp implements UserService{
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
+
 
     @Autowired
     public UserServiceImp(
-            UserRepository userRepository
-    ) {
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -72,5 +82,43 @@ public class UserServiceImp implements UserService{
     @Override
     public void deleteAll() {
         userRepository.deleteAll();
+    }
+
+
+    @Override
+    public void add(String username, String password, List<Long> roles) {
+        User user = new User();
+
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRoles(
+                roles.stream()
+                .map(roleRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet())
+        );
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public void edit(Long id, String password, List<Long> roles) {
+
+        Optional<User> userOptional = userRepository.findById(id);
+        User user = userOptional.get();
+
+        if (!password.isEmpty()) {
+            user.setPassword(passwordEncoder.encode(password));
+        }
+        user.setRoles(
+                roles.stream()
+                .map(roleRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet())
+        );
+
+        userRepository.save(user);
     }
 }

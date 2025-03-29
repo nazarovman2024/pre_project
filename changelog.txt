@@ -13,7 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 
-    Branch: JPP_3.1.3_BootStrap
+    Branch: JPP_3.1.2
+## [20250329_1.2]
+
+### Added
+- User.add(), User.edit().
+
+### Removed
+- Templates: "registration", "users", "edit, "new", ".
+
+
+    Branch: JPP_3.1.2
 ## [20250328_0.1]
 
 ### Added
@@ -24,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
     Branch: JPP_3.1.2
-## [20250327_1.0]
+## [20250327_1]
 
 ### Fixed
 - Thymeleaf templates.

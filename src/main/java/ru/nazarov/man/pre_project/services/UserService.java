@@ -13,4 +13,7 @@ public interface UserService {
     List<User> getUsers(int pageNumber, int pageSize);
     void delete(Long id);
     void deleteAll();
+
+    void add(String username, String password, List<Long> roles);
+    void edit(Long id, String password, List<Long> roles);
 }
