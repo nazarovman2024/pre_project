@@ -13,6 +13,6 @@ public class UserController {
     public String showProfile(Authentication authentication, Model model) {
         User user = (User) authentication.getPrincipal();
         model.addAttribute("user", user);
-        return "user/profile";
+        return "user/user";
     }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -270,11 +270,13 @@
 <div class="container-fluid">
     <!-- Navigation panel -->
     <div class="nav-panel d-flex flex-column">
-        <a href="#" class="nav-link active">
+        <a sec:authorize="hasRole('USER')"
+           href="#" class="nav-link active">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Admin Dashboard</span>
         </a>
-        <a href="/user" class="nav-link">
+        <a sec:authorize="hasAnyRole('ADMIN', 'USER')"
+           href="/user" class="nav-link">
             <i class="fas fa-fw fa-user"></i>
             <span>User Profile</span>
         </a>

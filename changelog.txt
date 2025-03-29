@@ -14,6 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
     Branch: JPP_3.1.2
+## [20250329_2.0]
+
+### Changed
+- Templates: "profile" -> "user".
+
+### Removed
+- Templates: "index".
+
+    Branch: JPP_3.1.2
 ## [20250329_1.2]
 
 ### Added
