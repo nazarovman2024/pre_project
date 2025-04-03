@@ -1,5 +1,7 @@
 package ru.nazarov.man.pre_project.services;
 
+import ru.nazarov.man.pre_project.dto.UserCreateRequestDto;
+import ru.nazarov.man.pre_project.dto.*;
 import ru.nazarov.man.pre_project.entities.User;
 
 import java.util.List;
@@ -14,6 +16,12 @@ public interface UserService {
     void delete(Long id);
     void deleteAll();
 
-    void add(String username, String password, List<Long> roles);
-    void edit(Long id, String password, List<Long> roles);
+    // DTO
+    UserResponseDto findDtoById(Long id);
+    UserResponseDto findDtoByUsername(String username);
+    UserResponseDto toDto(User user);
+    UserResponseDto create(UserCreateRequestDto request);
+    UserResponseDto update(UserUpdateRequestDto request);
+    List<UserResponseDto> getUsersDto();
+    List<UserResponseDto> getUsersDto(int pageNumber, int pageSize);
 }
