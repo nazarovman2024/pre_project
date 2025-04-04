@@ -22,7 +22,7 @@ public class UserUpdateRequestDto {
     @Min(1)
     private Long id;
 
-    @Size(min = 4, max = 100, message = "The Password must be between 4 and 100 characters")
+    @Size(max = 100, message = "The Password must be between 4 and 100 characters")
 /*
     @Pattern(
             regexp = "^(?=.*[0-9])" +

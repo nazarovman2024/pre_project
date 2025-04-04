@@ -47,6 +47,7 @@ public class UserCreateRequestDto {
 
     private String confirmPassword;
 
+    @NotNull
     @NotEmpty(message = "Must be at least one role")
     private Set<Long> roles = new HashSet<>();
 }

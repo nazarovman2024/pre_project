@@ -96,7 +96,7 @@ public class RestAdminController {
         return userService.create(request);
     }
 
-    @PatchMapping
+    @PatchMapping("/users")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update user data")
     public UserResponseDto updateUser(
