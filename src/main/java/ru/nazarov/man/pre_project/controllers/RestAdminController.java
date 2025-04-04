@@ -9,20 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.nazarov.man.pre_project.entities.Role;
-import ru.nazarov.man.pre_project.entities.User;
 import ru.nazarov.man.pre_project.services.*;
 import ru.nazarov.man.pre_project.dto.*;
 
-import java.net.URI;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -138,14 +130,22 @@ public class RestAdminController {
     }
 
     @GetMapping("/roles")
-    public List<Role> rolesList() {
-        return roleService.getAll();
+    public List<RoleResponseDto> rolesList() {
+        return roleService.getRolesDto();
     }
 
+    @Operation(summary = "Get role by ID", description = "Returns role details by specified ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Role found"),
+            @ApiResponse(responseCode = "404", description = "Role not found")
+    })
     @GetMapping("/roles/{id}")
-    public ResponseEntity<Role> getRole(@PathVariable Long id) {
+    public ResponseEntity<RoleResponseDto> getRole(
+            @Parameter(description = "ID of the role to retrieve", example = "1", required = true)
+            @PathVariable Long id) {
+
         return roleService.findById(id)
-                .map(ResponseEntity::ok)  // found -> 200 OK
-                .orElse(ResponseEntity.notFound().build());  // not found -> 404
+                .map(role -> ResponseEntity.ok(roleService.toDto(role)))
+                .orElse(ResponseEntity.notFound().build());
     }
 }

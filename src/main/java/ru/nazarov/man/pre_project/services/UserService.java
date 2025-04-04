@@ -17,9 +17,9 @@ public interface UserService {
     void deleteAll();
 
     // DTO
+    UserResponseDto toDto(User user);
     UserResponseDto findDtoById(Long id);
     UserResponseDto findDtoByUsername(String username);
-    UserResponseDto toDto(User user);
     UserResponseDto create(UserCreateRequestDto request);
     UserResponseDto update(UserUpdateRequestDto request);
     List<UserResponseDto> getUsersDto();
