@@ -6,11 +6,9 @@ import io.swagger.v3.oas.annotations.responses.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.nazarov.man.pre_project.entities.Role;
 import ru.nazarov.man.pre_project.services.*;
 import ru.nazarov.man.pre_project.dto.*;
 

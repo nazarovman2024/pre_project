@@ -17,7 +17,7 @@
     <div class="container-fluid">
         <div class="d-flex align-items-center">
             <i class="fas fa-user-shield me-2"></i>
-            <span>
+            <span class="text-light">
                 <strong id="current-user-info"></strong>
                 <span> with roles: </span>
                 <span id="current-user-roles"></span>
@@ -158,17 +158,16 @@
 </div>
 
 <!-- Edit User Modal -->
-<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
             <form id="edit-user-form">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="modal-body">
-                    <input type="hidden" name="id" id="edit-user-id">
-                    <input type="hidden" name="_method" value="PATCH">
+                    <input type="hidden" id="edit-user-id">
 
                     <div class="mb-3">
                         <label class="form-label">Username</label>
@@ -176,27 +175,21 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="edit-password" class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="edit-password"
-                               name="password" placeholder="Leave blank to keep current">
+                        <label class="form-label">New Password (leave blank to keep current)</label>
+                        <input type="password" class="form-control" id="edit-password">
                     </div>
 
                     <div class="mb-3">
-                        <label for="edit-confirm-password" class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control" id="edit-confirm-password"
-                               name="confirmPassword" placeholder="Confirm new password">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="edit-confirm-password">
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Roles</label>
-                        <div class="d-flex flex-wrap gap-3" id="edit-roles-container">
-                            <!-- Roles will be loaded here dynamically -->
-                        </div>
-                    </div>
+                    <label class="form-label">Roles</label>
+                    <div id="edit-roles-container" class="d-flex flex-wrap gap-2 mb-3"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>
         </div>
