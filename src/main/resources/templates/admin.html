@@ -379,7 +379,39 @@
             // Delete user form submission
             $('#delete-user-form').on('submit', function(e) {
                 e.preventDefault();
-                deleteUser();
+
+                const userId = $('#delete-user-id').val();
+
+                fetch(`/api/admin/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => Promise.reject(err));
+                        }
+                        return response;
+                    })
+                    .then(() => {
+                        // Close the modal
+                        $('#deleteUserModal').modal('hide');
+
+                        // Show success message
+                        showAlert('User deleted successfully!', 'success');
+
+                        // Reload users list
+                        loadUsers();
+                    })
+                    .catch(error => {
+                        // Show error message
+                        const errorMsg = error.message || 'Failed to delete user';
+                        showAlert(errorMsg, 'danger');
+
+                        // Optionally keep the modal open to allow retry
+                        // $('#deleteUserModal').modal('hide');
+                    });
             });
 
             // Logout form submission
