@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:sec="http://www.w3.org/1999/xhtml">
+<body>
+<!-- Navigation panel -->
+<div th:fragment="navigation" class="d-flex flex-column flex-shrink-0 p-3 bg-white" style="width: 250px;">
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <a sec:authorize="hasRole('ADMIN')"
+               href="#" class="nav-link active">
+                <i class="fas fa-fw fa-tachometer-alt me-2"></i>
+                Admin Dashboard
+            </a>
+        </li>
+        <li>
+            <a sec:authorize="hasAnyRole('ADMIN', 'USER')"
+               href="/user" class="nav-link">
+                <i class="fas fa-fw fa-user me-2"></i>
+                User Profile
+            </a>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

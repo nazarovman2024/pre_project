@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Top bar -->
+<nav th:fragment="top-navbar" class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <div class="d-flex align-items-center">
+            <span class="text-light">
+                    <strong id="current-user-info"></strong>
+                    <span> with roles: </span>
+                    <span id="current-user-roles"></span>
+                </span>
+        </div>
+        <form id="logout-form" method="post">
+            <input type="hidden" id="csrf-token" name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn btn-outline-light btn-sm">
+                Logout
+            </button>
+        </form>
+    </div>
+</nav>
+</body>
+</html>
