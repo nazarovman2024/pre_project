@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Panel</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/style.css">
+    <!-- CSRF Meta Tags -->
+</head>
+<body>
+<!-- Top navigation bar -->
+<div class="top-bar d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+        <i class="fas fa-user-shield me-2"></i>
+        <span>
+            <strong id="current-user-info"></strong>
+            <span>&nbsp;with&nbsp;roles:&nbsp;</span>
+            <span id="current-user-roles"></span>
+        </span>
+    </div>
+
+    <div>
+        <form id="logout-form" action="/logout" method="post" class="d-inline">
+            <input type="hidden" id="csrf-token" name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn btn-outline-light btn-sm">
+                <i class="fas fa-sign-out-alt me-1"></i> Logout
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Main content -->
+<div class="container-fluid">
+    <!-- Navigation panel -->
+    <div th:fragment="navigation" class="nav-panel d-flex flex-column">
+        <a sec:authorize="hasRole('USER')"
+           href="#" class="nav-link active">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Admin Dashboard</span>
+        </a>
+        <a sec:authorize="hasAnyRole('ADMIN', 'USER')"
+           href="/user" class="nav-link">
+            <i class="fas fa-fw fa-user"></i>
+            <span>User Profile</span>
+        </a>
+    </div>
+
+    <!-- Content area -->
+    <div class="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0"><i class="fas fa-cog me-2"></i>Admin Panel</h2>
+        </div>
+
+        <div class="tabs">
+            <a href="#users-table" class="tab active"><i class="fas fa-table me-1"></i> Users Table</a>
+            <a href="#new-user" class="tab"><i class="fas fa-user-plus me-1"></i> New User</a>
+        </div>
+
+        <!-- Users Table Section -->
+        <div id="users-table" class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-users me-2"></i>All Users</span>
+                <span class="badge bg-primary rounded-pill" id="users-count">0</span>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Roles</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                        <!-- Users will be loaded here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- New User Section -->
+        <div id="new-user" class="card" style="display: none;">
+            <div class="card-header">
+                <i class="fas fa-user-plus me-2"></i>Add New User
+            </div>
+            <div class="card-body">
+                <form id="new-user-form" method="post">
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="newUsername" class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" id="newUsername" name="username"
+                                       placeholder="Enter username" required>
+                                <div class="invalid-feedback" id="username-error"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="newPassword" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="newPassword" name="password"
+                                       placeholder="Enter password" required>
+                                <div class="invalid-feedback" id="password-error"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="newConfirmPassword" class="form-label">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="newConfirmPassword" name="confirmPassword"
+                                       placeholder="Confirm password" required>
+                                <div class="invalid-feedback" id="confirmPassword-error"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Roles</label>
+                        <div class="d-flex flex-wrap gap-3" id="roles-container">
+                            <!-- Roles will be loaded here dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-user-plus me-1"></i> Create User
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Edit User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="edit-user-form">
+                <div class="modal-body">
+                    <input type="hidden" id="edit-user-id" name="id">
+
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" class="form-control" id="edit-username" readonly>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit-password" class="form-label">New Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control" id="edit-password"
+                                   name="password" placeholder="Leave blank to keep current">
+                            <div class="invalid-feedback" id="edit-password-error"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit-confirm-password" class="form-label">Confirm New Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control" id="edit-confirm-password"
+                                   name="confirmPassword" placeholder="Confirm new password">
+                            <div class="invalid-feedback" id="edit-confirmPassword-error"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Roles</label>
+                        <div class="d-flex flex-wrap gap-3" id="edit-roles-container">
+                            <!-- Roles will be loaded here dynamically -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete User Modal -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Delete User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="delete-user-form">
+                <div class="modal-body">
+                    <input type="hidden" id="delete-user-id" name="id">
+
+                    <div class="mb-3">
+                        <label class="form-label">ID</label>
+                        <div id="delete-user-id-text"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <div id="delete-username"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Roles</label>
+                        <div id="delete-user-roles"></div>
+                    </div>
+
+                    <div class="alert alert-danger mt-3">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>Warning!</strong> This action cannot be undone. All data associated with this user will be permanently deleted.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt me-1"></i> Delete
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JS -->
+<script src="/admin.js"></script>
+
+</body>
+</html>

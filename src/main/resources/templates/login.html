@@ -46,9 +46,6 @@
     <div th:if="${param.logout}" class="alert alert-success">
         You have been logged out.
     </div>
-    <div th:if="${param.registrationSuccess}" class="alert alert-success">
-        Registration successful! Please login.
-    </div>
 
     <form th:action="@{/login}" method="post">
         <div class="form-floating">

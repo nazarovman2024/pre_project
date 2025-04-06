@@ -1,19 +1,21 @@
 package ru.nazarov.man.pre_project.services;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.nazarov.man.pre_project.dto.*;
+import ru.nazarov.man.pre_project.entities.Role;
 import ru.nazarov.man.pre_project.entities.User;
-import ru.nazarov.man.pre_project.repositories.RoleRepository;
-import ru.nazarov.man.pre_project.repositories.UserRepository;
+import ru.nazarov.man.pre_project.repositories.*;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -84,41 +86,96 @@ public class UserServiceImp implements UserService{
         userRepository.deleteAll();
     }
 
-
+    // DTO
     @Override
-    public void add(String username, String password, List<Long> roles) {
-        User user = new User();
+    @Transactional(readOnly = true)
+    public UserResponseDto toDto(@NotNull User user) {
+        final UserResponseDto response = new UserResponseDto();
 
-        user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setRoles(
-                roles.stream()
-                .map(roleRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet())
+        response.setId(user.getId());
+        response.setUsername(user.getUsername());
+        response.setRoles(
+                user.getRoles().stream()
+                        .map(Role::getId)
+                        .collect(Collectors.toSet())
         );
 
-        userRepository.save(user);
+        return response;
     }
 
     @Override
-    public void edit(Long id, String password, List<Long> roles) {
+    @Transactional(readOnly = true)
+    public UserResponseDto findDtoById(Long id) {
+        return userRepository.findById(id)
+                .map(this::toDto)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User not found with ID: " + id
+                ));
+    }
 
-        Optional<User> userOptional = userRepository.findById(id);
-        User user = userOptional.get();
+    @Override
+    @Transactional(readOnly = true)
+    public UserResponseDto findDtoByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .map(this::toDto)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User not found with username: " + username
+                ));
+    }
 
-        if (!password.isEmpty()) {
-            user.setPassword(passwordEncoder.encode(password));
-        }
+    @Override
+    public UserResponseDto create(UserCreateRequestDto request) {
+
+        final User user = new User();
+
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRoles(
-                roles.stream()
-                .map(roleRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet())
+                request.getRoles().stream()
+                        .map(roleRepository::findById)
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(Collectors.toSet())
         );
 
-        userRepository.save(user);
+        return toDto(userRepository.save(user));
+    }
+
+    @Override
+    public UserResponseDto update(
+            UserUpdateRequestDto request
+    ) {
+        Optional<User> userOptional = userRepository.findById(request.getId());
+        User user = userRepository.findById(request.getId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + request.getId()));
+
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        user.setRoles(
+                request.getRoles().stream()
+                        .map(roleRepository::findById)
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(Collectors.toSet())
+        );
+
+        return toDto(userRepository.save(user));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserResponseDto> getUsersDto() {
+        List<User> users = getAllUsers();
+        return users == null ? Collections.emptyList()
+                : users.stream().map(this::toDto).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserResponseDto> getUsersDto(int pageNumber, int pageSize) {
+        List<User> users = getUsers(pageNumber, pageSize);
+        return users == null ? Collections.emptyList()
+                : users.stream().map(this::toDto).toList();
     }
 }

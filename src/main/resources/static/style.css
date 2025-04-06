@@ -1,0 +1,232 @@
+:root {
+    --primary-color: #4e73df;
+    --secondary-color: #f8f9fc;
+    --accent-color: #e74a3b;
+    --text-color: #5a5c69;
+    --light-gray: #eaecf4;
+    --dark-gray: #d1d3e2;
+}
+
+body {
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+.top-bar {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.top-role-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background-color: rgba(78, 115, 223, 0.1);
+    border-radius: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+.role-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background-color: rgba(78, 115, 223, 0.1);
+    color: var(--primary-color);
+    border-radius: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+.container-fluid {
+    display: flex;
+    min-height: calc(100vh - 64px);
+}
+
+.nav-panel {
+    width: 14rem;
+    background: linear-gradient(180deg, var(--primary-color) 10%, #224abe 100%);
+    color: white;
+    transition: all 0.15s;
+}
+
+.nav-link {
+    padding: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    border-left: 0.25rem solid transparent;
+    transition: all 0.3s;
+}
+
+.nav-link:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left: 0.25rem solid white;
+    font-weight: 700;
+}
+
+.nav-link i {
+    width: 1.5rem;
+    text-align: center;
+    margin-right: 0.5rem;
+}
+
+.content {
+    flex: 1;
+    padding: 1.5rem;
+    background-color: var(--secondary-color);
+}
+
+.card {
+    border: none;
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+    padding: 1rem 1.35rem;
+    font-weight: 600;
+    color: #4e73df;
+}
+
+.tabs {
+    border-bottom: 1px solid #e3e6f0;
+    margin-bottom: 1.5rem;
+}
+
+.tab {
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 600;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+}
+
+.tab:hover {
+    color: var(--primary-color);
+    border-bottom-color: var(--dark-gray);
+}
+
+.tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.table {
+    color: var(--text-color);
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+}
+
+[popover] {
+    padding: 1.5rem;
+    width: 500px;
+    max-width: 90vw;
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+[popover]::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.popover-header {
+    border-bottom: 1px solid #e3e6f0;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.popover-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e3e6f0;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #2e59d9;
+    border-color: #2653d4;
+}
+
+.btn-danger {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.btn-danger:hover {
+    background-color: #e02d1b;
+    border-color: #d52a1a;
+}
+
+.user-details {
+    margin-bottom: 1rem;
+}
+
+.user-details label {
+    font-weight: 600;
+    color: var(--text-color);
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.user-details div {
+    padding: 0.5rem;
+    background-color: var(--light-gray);
+    border-radius: 0.25rem;
+}
+
+#users-table, #new-user {
+    display: none;
+}
+
+/* Animation for popovers */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+[popover] {
+    animation: fadeIn 0.2s ease-out;
+}
