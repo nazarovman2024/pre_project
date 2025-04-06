@@ -39,7 +39,7 @@ $(document).ready(function () {
 
         const rolesHtml = user.roles.map(roleId => {
             const role = allRoles.find(r => r.id === roleId);
-            return role ? `<span class="badge bg-primary me-1">${role.name.replace('ROLE_', '')}</span>` : '';
+            return role ? `<span class="top-role-badge">${role.name.replace('ROLE_', '')}</span>` : '';
         }).join('');
 
         $('#current-user-roles').html(rolesHtml);
@@ -99,7 +99,7 @@ $(document).ready(function () {
         users.forEach(user => {
             const rolesHtml = user.roles.map(roleId => {
                 const role = allRoles.find(r => r.id === roleId);
-                return role ? `<span class="badge bg-primary me-1">${role.name.replace('ROLE_', '')}</span>` : '';
+                return role ? `<span class="role-badge me-1 mb-1"><i class="fas fa-shield-alt me-1"></i>${role.name.replace('ROLE_', '')}</span>` : '';
             }).join('');
 
             const row = `
@@ -270,6 +270,23 @@ $(document).ready(function () {
             });
     }
 
+    // Проверка совпадения паролей при редактировании пользователя
+    $(document).on('submit', '.editUserModal form', function(e) {
+        const password = $(this).find('input[name="password"]').val();
+        const confirmPassword = $(this).find('input[name="confirmPassword"]').val();
+
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            alert('Passwords do not match!');
+            return false;
+        } else if ($('input[name="roles"]:checked').length === 0) {
+            e.preventDefault();
+            alert('Select at least one Role.');
+            return false;
+        }
+        return true;
+    });
+
     // Update user
     function updateUser() {
         const userId = $('#edit-user-id').val();
@@ -436,7 +453,7 @@ $(document).ready(function () {
     // По умолчанию показываем таблицу пользователей
     $('.tabs a.active').click();
 
-    // Проверка совпадения паролей при создании пользователя
+    // Проверка совпадения паролей и наличия ролей при создании пользователя
     $('#new-user form').on('submit', function(e) {
         const password = $('#newPassword').val();
         const confirmPassword = $('#newConfirmPassword').val();
@@ -445,18 +462,9 @@ $(document).ready(function () {
             e.preventDefault();
             alert('Passwords do not match!');
             return false;
-        }
-        return true;
-    });
-
-    // Проверка совпадения паролей при редактировании пользователя
-    $(document).on('submit', '.edit-popover form', function(e) {
-        const password = $(this).find('input[name="password"]').val();
-        const confirmPassword = $(this).find('input[name="confirmPassword"]').val();
-
-        if (password && password !== confirmPassword) {
+        } else if ($('#new-user-form input[name="roles"]:checked').length === 0) {
             e.preventDefault();
-            alert('Passwords do not match!');
+            alert('Select at least one Role.');
             return false;
         }
         return true;
