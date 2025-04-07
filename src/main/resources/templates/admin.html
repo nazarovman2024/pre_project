@@ -124,7 +124,8 @@
                             <label for="newConfirmPassword" class="form-label">Confirm Password</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" class="form-control" id="newConfirmPassword" name="confirmPassword"
+                                <input type="password" class="form-control" id="newConfirmPassword"
+                                       name="confirmPassword"
                                        placeholder="Confirm password" required>
                                 <div class="invalid-feedback" id="confirmPassword-error"></div>
                             </div>
@@ -153,13 +154,13 @@
 <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Edit User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
             <form id="edit-user-form">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="modal-body">
-                    <input type="hidden" id="edit-user-id" name="id" method="PATCH">
+                    <input type="hidden" id="edit-user-id" name="id">
 
                     <div class="mb-3">
                         <label class="form-label">Username</label>
@@ -200,7 +201,7 @@
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times me-1"></i> Cancel
                     </button>
-                    <button type="button" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save me-1"></i> Save Changes
                     </button>
                 </div>
@@ -238,7 +239,8 @@
 
                     <div class="alert alert-danger mt-3">
                         <i class="fas fa-exclamation-circle me-2"></i>
-                        <strong>Warning!</strong> This action cannot be undone. All data associated with this user will be permanently deleted.
+                        <strong>Warning!</strong> This action cannot be undone. All data associated with this user will
+                        be permanently deleted.
                     </div>
                 </div>
                 <div class="modal-footer">

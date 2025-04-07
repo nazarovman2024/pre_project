@@ -195,7 +195,6 @@ $(document).ready(function () {
         });
     }
 
-/*
     // Open edit user modal
     function openEditUserModal(userId) {
         fetch(`/api/admin/users/${userId}`, {
@@ -243,7 +242,11 @@ $(document).ready(function () {
         }
 
         // Проверка наличия хотя бы одной роли
-        if (roles.length === 0) {
+        const selectedRoles = $('#edit-roles-container input[name="roles"]:checked').map(function() {
+            return parseInt(this.value);
+        }).get();
+
+        if (selectedRoles.length === 0) {
             showAlert('Select at least one Role.', 'danger');
             return false;
         }
@@ -275,128 +278,6 @@ $(document).ready(function () {
                 return response.json();
             })
             .then(() => {
-                $('#editUserModal').modal('hide');
-                showAlert('User updated successfully!', 'success');
-                loadUsers();
-
-                // If current user updated themselves, reload their info
-                if (userId === currentUser.id) {
-                    loadCurrentUser();
-                }
-            })
-            .catch(error => {
-                if (error.errors) {
-                    displayFormErrors(error.errors, 'edit-');
-                } else {
-                    showAlert(error.message || 'Failed to update user', 'danger');
-                }
-            });
-    }
-*/
-    // Open edit user modal
-    function openEditUserModal(userId) {
-        fetch(`/api/admin/users/${userId}`, {
-            headers: {
-                'X-CSRF-TOKEN': csrfToken
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to load user data');
-                }
-                return response.json();
-            })
-            .then(user => {
-                $('#edit-user-id').val(user.id);
-                $('#edit-username').val(user.username);
-
-                // Clear previous roles and errors
-                $('#edit-roles-container').empty();
-                $('.is-invalid').removeClass('is-invalid');
-                $('.invalid-feedback').remove();
-
-                // Render roles for edit form
-                const rolesHtml = allRoles.map(role => `
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox"
-                               id="edit-role-${role.id}" value="${role.id}" name="roles"
-                               ${(user.roles || []).includes(role.id) ? 'checked' : ''}>
-                        <label class="form-check-label" for="edit-role-${role.id}">
-                            ${$('<div>').text(role.name.replace('ROLE_', '')).html()}
-                        </label>
-                    </div>
-                `).join('');
-
-                $('#edit-roles-container').html(rolesHtml);
-
-                $('#editUserModal').modal('show');
-            })
-            .catch(error => {
-                console.error('Error loading user:', error);
-                showAlert('Failed to load user data', 'danger');
-            });
-    }
-
-    // Update user
-    function updateUser() {
-        // Clear previous errors
-        $('.is-invalid').removeClass('is-invalid');
-        $('.invalid-feedback').remove();
-
-        const userId = $('#edit-user-id').val();
-        const password = $('#edit-password').val();
-        const confirmPassword = $('#edit-confirm-password').val();
-
-        if ((password || confirmPassword) && (password !== confirmPassword)) {
-            showAlert('Passwords do not match!', 'danger');
-            return false;
-        }
-
-        // Get selected roles
-        const selectedRoles = $('#edit-roles-container input[name="roles"]:checked').map(function() {
-            return parseInt(this.value);
-        }).get();
-
-        // Check at least one role is selected
-        if (selectedRoles.length === 0) {
-            showAlert('Select at least one Role.', 'danger');
-            return false;
-        }
-
-        // Prepare form data
-        const formData = {
-            id: userId,
-            username: $('#edit-username').val(),
-            roles: selectedRoles
-        };
-
-        // Add password fields only if they are not empty
-        if (password) {
-            formData.password = password;
-            formData.confirmPassword = confirmPassword;
-        }
-
-        // Send data
-        fetch(`/api/admin/users`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify(formData)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => Promise.reject(err));
-                }
-                return response.json();
-            })
-            .then(() => {
-                // Clear password fields
-                $('#edit-password').val('');
-                $('#edit-confirm-password').val('');
-
-                // Hide modal and show success
                 $('#editUserModal').modal('hide');
                 showAlert('User updated successfully!', 'success');
                 loadUsers();
