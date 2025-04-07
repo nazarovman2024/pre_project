@@ -159,7 +159,7 @@
             </div>
             <form id="edit-user-form">
                 <div class="modal-body">
-                    <input type="hidden" id="edit-user-id" name="id">
+                    <input type="hidden" id="edit-user-id" name="id" method="PATCH">
 
                     <div class="mb-3">
                         <label class="form-label">Username</label>
@@ -200,7 +200,7 @@
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times me-1"></i> Cancel
                     </button>
-                    <button type="button" class="btn btn-primary" onclick="updateUser()">
+                    <button type="button" class="btn btn-primary">
                         <i class="fas fa-save me-1"></i> Save Changes
                     </button>
                 </div>

@@ -195,46 +195,7 @@ $(document).ready(function () {
         });
     }
 
-    // Create new user
-    function createNewUser() {
-        const formData = {
-            username: $('#newUsername').val(),
-            password: $('#newPassword').val(),
-            confirmPassword: $('#newConfirmPassword').val(),
-            roles: $('#new-user-form input[name="roles"]:checked').map(function () {
-                return parseInt(this.value);
-            }).get()
-        };
-
-        fetch('/api/admin/users', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify(formData)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => Promise.reject(err));
-                }
-                return response.json();
-            })
-            .then(() => {
-                $('#new-user-form')[0].reset();
-                showAlert('User created successfully!', 'success');
-                loadUsers();
-                $('.nav-tabs a[href="#users-table"]').tab('show');
-            })
-            .catch(error => {
-                if (error.errors) {
-                    displayFormErrors(error.errors);
-                } else {
-                    showAlert(error.message || 'Failed to create user', 'danger');
-                }
-            });
-    }
-
+/*
     // Open edit user modal
     function openEditUserModal(userId) {
         fetch(`/api/admin/users/${userId}`, {
@@ -270,35 +231,35 @@ $(document).ready(function () {
             });
     }
 
-    // Проверка совпадения паролей при редактировании пользователя
-    $(document).on('submit', '.editUserModal form', function(e) {
-        const password = $(this).find('input[name="password"]').val();
-        const confirmPassword = $(this).find('input[name="confirmPassword"]').val();
-
-        if (password !== confirmPassword) {
-            e.preventDefault();
-            alert('Passwords do not match!');
-            return false;
-        } else if ($('input[name="roles"]:checked').length === 0) {
-            e.preventDefault();
-            alert('Select at least one Role.');
-            return false;
-        }
-        return true;
-    });
-
     // Update user
     function updateUser() {
         const userId = $('#edit-user-id').val();
+        const password = $('#edit-password').val();
+        const confirmPassword = $('#edit-confirm-password').val();
+
+        if ((password || confirmPassword) && (password !== confirmPassword)) {
+            showAlert('Passwords do not match!', 'danger');
+            return false;
+        }
+
+        // Проверка наличия хотя бы одной роли
+        if (roles.length === 0) {
+            showAlert('Select at least one Role.', 'danger');
+            return false;
+        }
+
+        // Сбор данных формы
         const formData = {
-            id: parseInt(userId),
-            password: $('#edit-password').val(),
-            confirmPassword: $('#edit-confirm-password').val(),
-            roles: $('#edit-user-form input[name="roles"]:checked').map(function () {
+            id: userId,
+            username: $('#edit-username').val(),
+            password: password,
+            confirmPassword: confirmPassword,
+            roles: $('#edit-roles-container input[name="roles"]:checked').map(function () {
                 return parseInt(this.value);
             }).get()
         };
 
+        // Отправка данных
         fetch('/api/admin/users', {
             method: 'PATCH',
             headers: {
@@ -319,7 +280,129 @@ $(document).ready(function () {
                 loadUsers();
 
                 // If current user updated themselves, reload their info
-                if (parseInt(userId) === currentUser.id) {
+                if (userId === currentUser.id) {
+                    loadCurrentUser();
+                }
+            })
+            .catch(error => {
+                if (error.errors) {
+                    displayFormErrors(error.errors, 'edit-');
+                } else {
+                    showAlert(error.message || 'Failed to update user', 'danger');
+                }
+            });
+    }
+*/
+    // Open edit user modal
+    function openEditUserModal(userId) {
+        fetch(`/api/admin/users/${userId}`, {
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load user data');
+                }
+                return response.json();
+            })
+            .then(user => {
+                $('#edit-user-id').val(user.id);
+                $('#edit-username').val(user.username);
+
+                // Clear previous roles and errors
+                $('#edit-roles-container').empty();
+                $('.is-invalid').removeClass('is-invalid');
+                $('.invalid-feedback').remove();
+
+                // Render roles for edit form
+                const rolesHtml = allRoles.map(role => `
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                               id="edit-role-${role.id}" value="${role.id}" name="roles"
+                               ${(user.roles || []).includes(role.id) ? 'checked' : ''}>
+                        <label class="form-check-label" for="edit-role-${role.id}">
+                            ${$('<div>').text(role.name.replace('ROLE_', '')).html()}
+                        </label>
+                    </div>
+                `).join('');
+
+                $('#edit-roles-container').html(rolesHtml);
+
+                $('#editUserModal').modal('show');
+            })
+            .catch(error => {
+                console.error('Error loading user:', error);
+                showAlert('Failed to load user data', 'danger');
+            });
+    }
+
+    // Update user
+    function updateUser() {
+        // Clear previous errors
+        $('.is-invalid').removeClass('is-invalid');
+        $('.invalid-feedback').remove();
+
+        const userId = $('#edit-user-id').val();
+        const password = $('#edit-password').val();
+        const confirmPassword = $('#edit-confirm-password').val();
+
+        if ((password || confirmPassword) && (password !== confirmPassword)) {
+            showAlert('Passwords do not match!', 'danger');
+            return false;
+        }
+
+        // Get selected roles
+        const selectedRoles = $('#edit-roles-container input[name="roles"]:checked').map(function() {
+            return parseInt(this.value);
+        }).get();
+
+        // Check at least one role is selected
+        if (selectedRoles.length === 0) {
+            showAlert('Select at least one Role.', 'danger');
+            return false;
+        }
+
+        // Prepare form data
+        const formData = {
+            id: userId,
+            username: $('#edit-username').val(),
+            roles: selectedRoles
+        };
+
+        // Add password fields only if they are not empty
+        if (password) {
+            formData.password = password;
+            formData.confirmPassword = confirmPassword;
+        }
+
+        // Send data
+        fetch(`/api/admin/users`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => Promise.reject(err));
+                }
+                return response.json();
+            })
+            .then(() => {
+                // Clear password fields
+                $('#edit-password').val('');
+                $('#edit-confirm-password').val('');
+
+                // Hide modal and show success
+                $('#editUserModal').modal('hide');
+                showAlert('User updated successfully!', 'success');
+                loadUsers();
+
+                // If current user updated themselves, reload their info
+                if (userId === currentUser.id) {
                     loadCurrentUser();
                 }
             })
@@ -361,15 +444,41 @@ $(document).ready(function () {
             });
     }
 
-    // Delete user
-    function deleteUser() {
-        const userId = $('#delete-user-id').val();
+    // Create new user
+    function createNewUser(event) {
+        const password = $('#newPassword').val();
+        const confirmPassword = $('#newConfirmPassword').val();
 
-        fetch(`/api/admin/users/${userId}`, {
-            method: 'DELETE',
+        // Проверка паролей
+        if (password !== confirmPassword) {
+            showAlert('Passwords do not match!', 'danger');
+            return false;
+        }
+
+        // Проверка ролей
+        if ($('#new-user-form input[name="roles"]:checked').length === 0) {
+            showAlert('Select at least one Role.', 'danger');
+            return false;
+        }
+
+        // Сбор данных формы
+        const formData = {
+            username: $('#newUsername').val(),
+            password: password,
+            confirmPassword: confirmPassword,
+            roles: $('#new-user-form input[name="roles"]:checked').map(function () {
+                return parseInt(this.value);
+            }).get()
+        };
+
+        // Отправка данных
+        fetch('/api/admin/users', {
+            method: 'POST',
             headers: {
+                'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': csrfToken
-            }
+            },
+            body: JSON.stringify(formData)
         })
             .then(response => {
                 if (!response.ok) {
@@ -378,18 +487,20 @@ $(document).ready(function () {
                 return response.json();
             })
             .then(() => {
-                $('#deleteUserModal').modal('hide');
-                showAlert('User deleted successfully!', 'success');
+                $('#new-user-form')[0].reset();
+                showAlert('User created successfully!', 'success');
                 loadUsers();
-
-                // If current user deleted themselves, redirect to login
-                if (parseInt(userId) === currentUser.id) {
-                    window.location.href = '/login';
-                }
+                $('.nav-tabs a[href="#users-table"]').tab('show');
             })
             .catch(error => {
-                showAlert(error.message || 'Failed to delete user', 'danger');
+                if (error.errors) {
+                    displayFormErrors(error.errors);
+                } else {
+                    showAlert(error.message || 'Failed to create user', 'danger');
+                }
             });
+
+        return true;
     }
 
     // Logout user
@@ -439,8 +550,8 @@ $(document).ready(function () {
         }, 5000);
     }
 
-    // Инициализация вкладок
-    $('.tabs a').on('click', function(e) {
+    // Pages initialization
+    $('.tabs a').on('click', function (e) {
         e.preventDefault();
         $('.tabs a').removeClass('active');
         $(this).addClass('active');
@@ -450,47 +561,6 @@ $(document).ready(function () {
         $(target).show();
     });
 
-    // По умолчанию показываем таблицу пользователей
+    // Default users table show
     $('.tabs a.active').click();
-
-    // Проверка совпадения паролей и наличия ролей при создании пользователя
-    $('#new-user form').on('submit', function(e) {
-        const password = $('#newPassword').val();
-        const confirmPassword = $('#newConfirmPassword').val();
-
-        if (password !== confirmPassword) {
-            e.preventDefault();
-            alert('Passwords do not match!');
-            return false;
-        } else if ($('#new-user-form input[name="roles"]:checked').length === 0) {
-            e.preventDefault();
-            alert('Select at least one Role.');
-            return false;
-        }
-        return true;
-    });
-
-    // Инициализация popover'ов
-    $('[popovertarget]').each(function() {
-        const target = $(this).attr('popovertarget');
-        $(this).on('click', function() {
-            $('#' + target).togglePopover();
-        });
-    });
-
-    // Закрытие popover'ов при клике вне их области
-    $(document).on('click', function(e) {
-        if (!$(e.target).closest('[popover], [popovertarget]').length) {
-            $('[popover]').hidePopover();
-        }
-    });
-
-    // Обработка удаления пользователя
-    $(document).on('submit', '.delete-popover form', function(e) {
-        if (!confirm('Are you sure you want to delete this user?')) {
-            e.preventDefault();
-            return false;
-        }
-        return true;
-    });
 });
